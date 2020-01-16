@@ -39,6 +39,11 @@ class TasksProvider extends ChangeNotifier {
 
   Future addTask(String title) async {
     if (title == null || title.isEmpty) return;
+    final Task task = Task(
+        title: title,
+        creatorId: "None for now",
+        date: DateTime.now(),
+        done: false);
     // TODO: add task
   }
 

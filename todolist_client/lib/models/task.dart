@@ -3,8 +3,9 @@ class Task {
   DateTime date;
   String title;
   bool done;
+  String id;
 
-  Task({this.title, this.date, this.creatorId, this.done});
+  Task({this.title, this.date, this.creatorId, this.done, this.id});
 
   factory Task.fromMap(Map<String, dynamic> map) {
     return Task(
@@ -13,7 +14,8 @@ class Task {
             ? DateTime.fromMillisecondsSinceEpoch(map["date"])
             : null,
         done: map["done"],
-        creatorId: map["creatorId"]);
+        creatorId: map["creatorId"],
+        id: map["id"]);
   }
 
   Map<String, dynamic> toMap() {
@@ -21,7 +23,8 @@ class Task {
       "title": title,
       "date": date?.millisecondsSinceEpoch,
       "done": done,
-      "creatorId": creatorId
+      "creatorId": creatorId,
+      "id": id
     };
   }
 }
