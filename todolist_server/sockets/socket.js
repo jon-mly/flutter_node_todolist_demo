@@ -28,9 +28,7 @@ const onDisconnect = socket => {
 // Socket configuration
 //
 
-const addListenersToSocket = (socket) => {
-    // TODO: add listeners
-};
+const addListenersToSocket = socket => {};
 
 //
 // Exportation
