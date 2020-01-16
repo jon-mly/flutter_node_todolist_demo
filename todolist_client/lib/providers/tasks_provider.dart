@@ -3,9 +3,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:todolist_client/models/task.dart';
+import 'package:todolist_client/services/api.dart';
 
 class TasksProvider extends ChangeNotifier {
   IO.Socket _socket;
+
+  final ApiService _apiService = ApiService();
 
   List<Task> _tasks;
   List<Task> get tasks => _tasks;
@@ -30,6 +33,7 @@ class TasksProvider extends ChangeNotifier {
 
   @override
   void dispose() {
+    _socket.destroy();
     super.dispose();
   }
 
@@ -44,16 +48,16 @@ class TasksProvider extends ChangeNotifier {
         creatorId: "None for now",
         date: DateTime.now(),
         done: false);
-    // TODO: add task
+    await _apiService.addTask(task);
   }
 
   Future toggleTaskState(Task task) async {
     task.done = !task.done;
-    // TODO: upload task
+    await _apiService.updateTask(task);
   }
 
   Future deleteTask(Task task) async {
-    // TODO: delete task
+    await _apiService.deleteTask(task);
   }
 
   //
