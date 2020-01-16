@@ -10,7 +10,7 @@ class TasksProvider extends ChangeNotifier {
 
   final ApiService _apiService = ApiService();
 
-  List<Task> _tasks;
+  List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
   //
@@ -19,11 +19,11 @@ class TasksProvider extends ChangeNotifier {
 
   void prepare() {
     if (kIsWeb)
-      _socket = IO.io("http://192.168.1.18:8080", <String, dynamic>{
+      _socket = IO.io("http://192.168.1.18:8079", <String, dynamic>{
         'transports': ['websocket'],
       });
     else
-      _socket = IO.io("http://192.168.1.18:8080");
+      _socket = IO.io("http://192.168.1.18:8079");
 
     _socket.on('connect', _onConnect);
     _socket.on('disconnect', _onDisconnect);
@@ -73,15 +73,19 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _onTasks(dynamic tasksResponse) {
-    print("Received tasks :\n" + tasksResponse);
+    print("Received tasks : " + tasksResponse);
     try {
       // The JSON string to parse may not contain quotes around keys and string values.
       // This, it is needed to encode the string before decoding it so that quotes are
       // added and the content parsable.
-      if (!tasksResponse is String) tasksResponse = json.encode(tasksResponse);
-      final List<Map<String, dynamic>> tasksMap = json.decode(tasksResponse);
+      if (!(tasksResponse is String))
+        tasksResponse = json.encode(tasksResponse);
+      final List<dynamic> tasksMap = json.decode(tasksResponse);
       _tasks = tasksMap.map((map) => Task.fromMap(map)).toList();
+      print(_tasks);
       notifyListeners();
-    } catch (e) {}
+    } catch (e) {
+      print(e);
+    }
   }
 }

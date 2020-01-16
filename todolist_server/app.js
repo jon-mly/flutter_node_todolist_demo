@@ -28,7 +28,7 @@ mongoose
 
 const app = express();
 
-app.use(headerConfig);
+app.use(headerConfig.addResponseHeader);
 
 app.use(bodyParser.json());
 

@@ -15,7 +15,7 @@ class Task {
             : null,
         done: map["done"],
         creatorId: map["creatorId"],
-        id: map["id"]);
+        id: map["_id"]);
   }
 
   Map<String, dynamic> toMap() {
@@ -24,7 +24,12 @@ class Task {
       "date": date?.millisecondsSinceEpoch,
       "done": done,
       "creatorId": creatorId,
-      "id": id
+      "_id": id
     };
+  }
+
+  @override
+  String toString() {
+    return toMap().toString();
   }
 }
