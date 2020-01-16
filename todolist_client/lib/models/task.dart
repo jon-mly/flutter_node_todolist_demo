@@ -1,8 +1,8 @@
 class Task {
-  final String creatorId;
-  final DateTime date;
-  final String title;
-  final bool done;
+  String creatorId;
+  DateTime date;
+  String title;
+  bool done;
 
   Task({this.title, this.date, this.creatorId, this.done});
 

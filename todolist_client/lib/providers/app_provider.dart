@@ -1,3 +1,3 @@
-import 'package:provider/provider.dart';
+import 'package:flutter/foundation.dart';
 
-class AppProvider extends ChangeNotifierProvider {}
+class AppProvider extends ChangeNotifier {}
