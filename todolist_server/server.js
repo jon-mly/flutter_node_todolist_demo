@@ -1,5 +1,8 @@
 const http = require("http");
 const app = require("./app");
+const io = require("socket.io");
+
+const socketConfig = require("./sockets/socket");
 
 //
 // Actions
@@ -12,6 +15,9 @@ const server = http.createServer(app);
 
 server.on("error", errorHandler);
 server.on("listening", listeningHandler);
+
+const socketConnection = io(server);
+socketConfig.configureSocketConnection(socketConnection);
 
 server.listen(port);
 
