@@ -42,9 +42,7 @@ exports.signup = (req, res, next) => {
       user
         .save()
         .then(() =>
-          res
-            .status(201)
-            .json({ userId: newUser._id, token: getToken(newUser._id) })
+          res.status(201).json({ ...newUser, token: getToken(newUser._id) })
         )
         .catch(error => res.end(400).json({ error }));
     })
@@ -53,7 +51,7 @@ exports.signup = (req, res, next) => {
 
 exports.login = (req, res, next) => {
   User.findOne({ username: req.body.username })
-    .then(() => {
+    .then(user => {
       if (!user) {
         return res.status(401).json({ error: "User not found" });
       }
@@ -62,8 +60,8 @@ exports.login = (req, res, next) => {
           return res.status(401).json({ error: "Invalid password" });
         }
         return res.status(200).json({
-          userId: user._id,
-          token: getToken(user._id)
+          ...user,
+          token: getToken(newUser._id)
         });
       });
     })
