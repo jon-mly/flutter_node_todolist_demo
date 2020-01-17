@@ -10,7 +10,7 @@ class ApiService {
   // ########## AUTH
   //
 
-  Future signUp(String unsername, String password) async {}
+  Future signUp(String username, String password) async {}
 
   Future login(String username, String password) async {}
 
