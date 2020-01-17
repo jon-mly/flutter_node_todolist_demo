@@ -1,8 +1,10 @@
 const Task = require("../models/task");
 const socket = require("../sockets/socket");
 
-exports.emitTasks = () => {
-  Task.find().then(socket.emitTasksToAll);
+const emitTasks = () => {
+  Task.find()
+    .then(socket.emitTasksToAll)
+    .catch(console.log);
 };
 
 exports.addTask = (req, res, next) => {
@@ -17,7 +19,7 @@ exports.addTask = (req, res, next) => {
     .save()
     .then(() => {
       emitTasks();
-      return res.status(201).json({ message: "Task created" });
+      res.status(201).json({ message: "Task created" });
     })
     .catch(error => res.status(400).json({ error }));
 };
@@ -27,7 +29,7 @@ exports.deleteTask = (req, res, next) => {
   Task.deleteOne({ _id: req.params.id })
     .then(() => {
       emitTasks();
-      return res.status(200).json({ message: "Task deleted" });
+      res.status(200).json({ message: "Task deleted" });
     })
     .catch(error => res.status(400).json({ error }));
 };
@@ -36,7 +38,9 @@ exports.modifyTask = (req, res, next) => {
   Task.updateOne({ _id: req.params.id }, { ...req.body, _id: req.params.id })
     .then(() => {
       emitTasks();
-      return res.status(200).json({ message: "Task updated" });
+      res.status(200).json({ message: "Task updated" });
     })
     .catch(error => res.status(400).json({ error }));
 };
+
+exports.emitTasks = emitTasks;
