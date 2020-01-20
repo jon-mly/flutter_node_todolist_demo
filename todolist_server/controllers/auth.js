@@ -69,6 +69,7 @@ exports.login = (req, res, next) => {
 };
 
 exports.verify = (req, res, next) => {
+  const token = req.params.token;
   const tokenValid = verifyToken(token.getToken(req));
   if (tokenValid) {
     return res.status(200).json({ message: "Token is valid" });
