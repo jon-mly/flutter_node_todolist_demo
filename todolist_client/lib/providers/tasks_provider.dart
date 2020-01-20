@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:todolist_client/models/task.dart';
 import 'package:todolist_client/services/api.dart';
+import 'package:todolist_client/services/shared_preferences.dart';
 
 class TasksProvider extends ChangeNotifier {
   IO.Socket _socket;
@@ -13,11 +14,15 @@ class TasksProvider extends ChangeNotifier {
   List<Task> _tasks = [];
   List<Task> get tasks => _tasks;
 
+  String _currentToken;
+
   //
   // ########## LIFECYCLE
   //
 
-  void prepare() {
+  void prepare() async {
+    _currentToken = await SharedPreferencesService.token;
+
     if (kIsWeb)
       _socket = IO.io("http://192.168.1.18:8079", <String, dynamic>{
         'transports': ['websocket'],
@@ -48,16 +53,16 @@ class TasksProvider extends ChangeNotifier {
         creatorId: "None for now",
         date: DateTime.now(),
         done: false);
-    await _apiService.addTask(task);
+    await _apiService.addTask(task, _currentToken);
   }
 
   Future toggleTaskState(Task task) async {
     task.done = !task.done;
-    await _apiService.updateTask(task);
+    await _apiService.updateTask(task, _currentToken);
   }
 
   Future deleteTask(Task task) async {
-    await _apiService.deleteTask(task);
+    await _apiService.deleteTask(task, _currentToken);
   }
 
   //

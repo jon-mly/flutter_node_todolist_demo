@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const token = require("../middlewares/auth");
+const authMiddleware = require("../middlewares/auth");
 const User = require("../models/user");
 
 const authTokenSecret = "THE_TOKEN_SECRET";
@@ -38,7 +38,6 @@ exports.signup = (req, res, next) => {
         username: req.body.username,
         password: hash
       });
-      // TODO: send token
       user
         .save()
         .then(() =>
@@ -69,8 +68,7 @@ exports.login = (req, res, next) => {
 };
 
 exports.verify = (req, res, next) => {
-  const token = req.params.token;
-  const tokenValid = verifyToken(token.getToken(req));
+  const tokenValid = verifyToken(authMiddleware.getToken(req));
   if (tokenValid) {
     return res.status(200).json({ message: "Token is valid" });
   }
