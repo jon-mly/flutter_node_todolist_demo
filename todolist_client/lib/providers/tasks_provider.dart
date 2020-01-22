@@ -48,11 +48,7 @@ class TasksProvider extends ChangeNotifier {
 
   Future addTask(String title) async {
     if (title == null || title.isEmpty) return;
-    final Task task = Task(
-        title: title,
-        creatorId: "None for now",
-        date: DateTime.now(),
-        done: false);
+    final Task task = Task(title: title, date: DateTime.now(), done: false);
     await _apiService.addTask(task, _currentToken);
   }
 
@@ -78,7 +74,6 @@ class TasksProvider extends ChangeNotifier {
   }
 
   void _onTasks(dynamic tasksResponse) {
-    print("Received tasks : " + tasksResponse);
     try {
       // The JSON string to parse may not contain quotes around keys and string values.
       // This, it is needed to encode the string before decoding it so that quotes are
