@@ -34,6 +34,8 @@ class TasksProvider extends ChangeNotifier {
     _socket.on('disconnect', _onDisconnect);
 
     _socket.on('tasks', _onTasks);
+
+    _socket.on('error', _onError);
   }
 
   @override
@@ -45,6 +47,10 @@ class TasksProvider extends ChangeNotifier {
   //
   // ########## ACTIONS
   //
+
+  Future _authentify() async {
+    _socket.emit('auth', json.encode({'token': _currentToken}));
+  }
 
   Future addTask(String title) async {
     if (title == null || title.isEmpty) return;
@@ -67,6 +73,7 @@ class TasksProvider extends ChangeNotifier {
 
   void _onConnect(dynamic object) {
     print("Socket ${_socket.id} connected");
+    _authentify();
   }
 
   void _onDisconnect(dynamic object) {
@@ -87,5 +94,9 @@ class TasksProvider extends ChangeNotifier {
     } catch (e) {
       print(e);
     }
+  }
+
+  void _onError(dynamic errorResponse) {
+    print(errorResponse);
   }
 }
