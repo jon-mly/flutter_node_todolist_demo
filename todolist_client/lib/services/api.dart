@@ -12,7 +12,7 @@ class ApiService {
   //
 
   Future<User> signUp(String username, String password) async {
-    final String url = _baseUrl + "/api/signup";
+    final String url = _baseUrl + "/api/auth/signup";
     Map<String, String> header = {'Content-Type': 'application/json'};
     Map<String, String> body = {"username": username, "password": password};
     final Response response =
@@ -27,7 +27,8 @@ class ApiService {
   }
 
   Future<User> login(String username, String password) async {
-    final String url = _baseUrl + "/api/login";
+    final String url = _baseUrl + "/api/auth/login";
+    print(url);
     Map<String, String> header = {'Content-Type': 'application/json'};
     Map<String, String> body = {"username": username, "password": password};
     final Response response =

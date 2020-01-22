@@ -21,6 +21,7 @@ class _LoginPageState extends State<LoginPage> {
     Provider.of<AuthProvider>(context, listen: false)
         .login(_usernameController.text, _passwordController.text)
         .then((bool connected) {
+      print(connected);
       if (connected) _navigateToTasks();
     });
   }
@@ -29,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
     Provider.of<AuthProvider>(context, listen: false)
         .signup(_usernameController.text, _passwordController.text)
         .then((bool connected) {
+      print(connected);
       if (connected) _navigateToTasks();
     });
   }

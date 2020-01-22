@@ -31,6 +31,7 @@ const verifyToken = token => {
 //
 
 exports.signup = (req, res, next) => {
+  console.log(req.body);
   bcrypt
     .hash(req.body.password, 10)
     .then(hash => {
@@ -38,12 +39,13 @@ exports.signup = (req, res, next) => {
         username: req.body.username,
         password: hash
       });
-      user
+      console.log(newUser);
+      newUser
         .save()
         .then(() =>
           res.status(201).json({ ...newUser, token: getToken(newUser._id) })
         )
-        .catch(error => res.end(400).json({ error }));
+        .catch(error => res.status(400).json({ error }));
     })
     .catch(error => res.status(500).json({ error }));
 };
@@ -60,7 +62,7 @@ exports.login = (req, res, next) => {
         }
         return res.status(200).json({
           ...user,
-          token: getToken(newUser._id)
+          token: getToken(user._id)
         });
       });
     })
