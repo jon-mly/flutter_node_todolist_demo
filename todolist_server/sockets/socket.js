@@ -44,9 +44,9 @@ const onAuthentified = (socket, message) => {
     const parsed = JSON.parse(message);
     const token = parsed.token;
     const userId = tokenController.extractUserId(token);
-    console.log("User id : " + userId);
+    console.log("Authenticed user id : " + userId);
     socketClientsList[userId] = socket;
-    console.log("Socket id : " + socket.id);
+    console.log("New socket id : " + socket.id);
     socket.emit("auth", JSON.stringify({ message: "Authentified" }));
     tasksController.emitTasks(userId);
   } catch (e) {
@@ -64,7 +64,6 @@ const onDisconnect = (socket, message) => {
   console.log(socketClientsList);
   Object.entries(socketClientsList).forEach(([key, value]) => {
     if (value.id === socket.id) {
-      console.log("Deleting");
       delete socketClientsList[key];
     }
   });
