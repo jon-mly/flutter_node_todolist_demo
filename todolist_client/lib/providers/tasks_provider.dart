@@ -7,6 +7,8 @@ import 'package:todolist_client/services/api.dart';
 import 'package:todolist_client/services/shared_preferences.dart';
 
 class TasksProvider extends ChangeNotifier {
+  final _host = "192.168.1.16";
+
   IO.Socket _socket;
 
   final ApiService _apiService = ApiService();
@@ -22,33 +24,53 @@ class TasksProvider extends ChangeNotifier {
 
   void prepare() async {
     _currentToken = await SharedPreferencesService.token;
-
-    if (kIsWeb)
-      _socket = IO.io("http://192.168.1.18:8079", <String, dynamic>{
-        'transports': ['websocket'],
-      });
-    else
-      _socket = IO.io("http://192.168.1.18:8079");
-
-    _socket.on('connect', _onConnect);
-    _socket.on('disconnect', _onDisconnect);
-
-    _socket.on('tasks', _onTasks);
-
-    _socket.on('error', _onError);
+    _openSocket();
   }
 
   @override
   void dispose() {
-    _socket.destroy();
+    _closeSocket();
     super.dispose();
+  }
+
+  //
+  // ########## SOCKET LIFECYCLE
+  //
+
+  void _openSocket() {
+    if (_socket != null) _closeSocket();
+
+    if (kIsWeb)
+      _socket = IO.io("http://$_host:8079", <String, dynamic>{
+        'transports': ['websocket'],
+        'forceNew': true
+      });
+    else
+      _socket =
+          IO.io("http://$_host:8079", <String, dynamic>{'forceNew': true});
+
+    _socket.on('connect', _onConnect);
+    _socket.on('disconnect', _onDisconnect);
+
+    _socket.on('auth', _onAuthResponse);
+    _socket.on('tasks', _onTasks);
+    _socket.on('error', _onError);
+  }
+
+  void _closeSocket() {
+    if (_socket == null) return;
+
+    _socket.disconnect();
+    _socket.close();
+    _socket.destroy();
+    _socket = null;
   }
 
   //
   // ########## ACTIONS
   //
 
-  Future _authentify() async {
+  Future _authenticate() async {
     _socket.emit('auth', json.encode({'token': _currentToken}));
   }
 
@@ -73,7 +95,11 @@ class TasksProvider extends ChangeNotifier {
 
   void _onConnect(dynamic object) {
     print("Socket ${_socket.id} connected");
-    _authentify();
+    _authenticate();
+  }
+
+  void _onAuthResponse(dynamic object) {
+    print(object);
   }
 
   void _onDisconnect(dynamic object) {

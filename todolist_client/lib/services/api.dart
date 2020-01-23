@@ -5,7 +5,8 @@ import 'package:todolist_client/models/task.dart';
 import 'package:todolist_client/models/user.dart';
 
 class ApiService {
-  String get _baseUrl => "http://192.168.1.18:8079";
+  final _host = "/192.168.1.16";
+  String get _baseUrl => "http://$_host:8079";
 
   //
   // ########## AUTH

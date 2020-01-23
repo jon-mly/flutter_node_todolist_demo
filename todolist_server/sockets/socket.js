@@ -14,7 +14,6 @@ const configureSocketConnection = connection => {
   activeConnection = connection;
 
   connection.on("connection", onConnection);
-  connection.on("disconnect", onDisconnect);
   connection.on("error", console.log);
 };
 
@@ -27,19 +26,13 @@ const onConnection = socket => {
   addListenersToSocket(socket);
 };
 
-const onDisconnect = socket => {
-  console.log("Client disconnected : " + socket);
-  // TODO: remove socket from clients list
-};
-
 //
 // Socket configuration
 //
 
 const addListenersToSocket = socket => {
-  socket.on("auth", message => {
-    onAuthentified(socket, message);
-  });
+  socket.on("disconnect", message => onDisconnect(socket, message));
+  socket.on("auth", message => onAuthentified(socket, message));
 };
 
 //
@@ -51,8 +44,11 @@ const onAuthentified = (socket, message) => {
     const parsed = JSON.parse(message);
     const token = parsed.token;
     const userId = tokenController.extractUserId(token);
+    console.log("User id : " + userId);
     socketClientsList[userId] = socket;
-    tasksController.emitTasks();
+    console.log("Socket id : " + socket.id);
+    socket.emit("auth", JSON.stringify({ message: "Authentified" }));
+    tasksController.emitTasks(userId);
   } catch (e) {
     console.log(e);
     socket.emit(
@@ -60,6 +56,19 @@ const onAuthentified = (socket, message) => {
       JSON.stringify({ message: "The token is invalid. Auth again." })
     );
   }
+};
+
+const onDisconnect = (socket, message) => {
+  console.log("Client disconnected : " + socket);
+  console.log("Socket to delete " + socket.id);
+  console.log(socketClientsList);
+  Object.entries(socketClientsList).forEach(([key, value]) => {
+    if (value.id === socket.id) {
+      console.log("Deleting");
+      delete socketClientsList[key];
+    }
+  });
+  console.log(Object.keys(socketClientsList));
 };
 
 //
@@ -75,6 +84,7 @@ const emitTasksToUser = (tasks, userId) => {
   if (!socket) {
     return;
   }
+  console.log("Socket receiving tasks : " + socket.id);
   socket.emit("tasks", JSON.stringify(tasks));
 };
 
